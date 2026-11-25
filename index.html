@@ -1,0 +1,354 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RODNY · AI Approval Gate</title>
+<link rel="icon" href="favicon.ico">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700&family=Montserrat:wght@600;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#002348; --primary:#002348; --primary-soft:#E2E8F2; --orange:#FE7C07; --orange-soft:#FFF0E2;
+  --green:#1F7A4D; --green-soft:#E3F3EA; --red:#B3362C; --red-soft:#FBE6E3;
+  --paper:#F4F6F8; --card:#FFFFFF; --line:#DCE2E8; --ink:#002348; --muted:#4E5A6E;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --navy:#0A1830; --primary:#9DBBEA; --primary-soft:#1A2B47; --orange:#FF9A3C; --orange-soft:#3A2512;
+    --green:#6FCF9B; --green-soft:#16301F; --red:#E77B70; --red-soft:#3D1D1A;
+    --paper:#0F1626; --card:#18223A; --line:#2A3654; --ink:#E8EDF5; --muted:#A3AFC2;
+  }
+}
+:root[data-theme="dark"]{
+  --navy:#0A1830; --primary:#9DBBEA; --primary-soft:#1A2B47; --orange:#FF9A3C; --orange-soft:#3A2512;
+  --green:#6FCF9B; --green-soft:#16301F; --red:#E77B70; --red-soft:#3D1D1A;
+  --paper:#0F1626; --card:#18223A; --line:#2A3654; --ink:#E8EDF5; --muted:#A3AFC2;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}*{transition:none!important}}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:Rubik,"Segoe UI",Arial,sans-serif;font-size:17px;line-height:1.55}
+a{color:var(--primary)}
+:focus-visible{outline:3px solid var(--orange);outline-offset:2px;border-radius:4px}
+.wrap{max-width:1120px;margin:0 auto;padding:0 24px}
+@media (max-width:600px){.wrap{padding:0 16px}}
+/* RODNY always in Latin letters, in the logo's typeface */
+.r{font-family:Montserrat,Rubik,sans-serif;font-weight:800;letter-spacing:.02em;direction:ltr;unicode-bidi:isolate}
+
+.draft{background:var(--orange-soft);border-bottom:1px solid var(--line);font-size:14px;padding:8px 0;color:var(--ink)}
+.draft ul{margin:2px 0 0;padding-inline-start:20px}
+
+header{display:flex;align-items:center;justify-content:space-between;padding:16px 0}
+.brand{display:flex;align-items:center;gap:10px;direction:ltr;color:var(--ink);text-decoration:none}
+.brand img{width:60px;height:60px}
+.brand .name{font-family:Montserrat,Rubik,sans-serif;font-weight:800;font-size:34px;letter-spacing:.02em;line-height:1}
+.brand .sub{display:block;font-family:Montserrat,Rubik,sans-serif;font-weight:600;font-size:15px;letter-spacing:.04em;color:var(--muted);margin-top:4px}
+@media (max-width:600px){.brand img{width:50px;height:50px}.brand .name{font-size:29px}.brand .sub{font-size:13.5px}}
+.lang{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:6px 14px;font:inherit;font-size:14px;cursor:pointer}
+
+.hero{display:grid;grid-template-columns:1.1fr .9fr;gap:40px;align-items:center;padding:20px 0 44px}
+@media (max-width:860px){.hero{grid-template-columns:1fr;gap:24px;padding-top:8px}}
+.hero h1{font-size:clamp(34px,5.2vw,58px);line-height:1.1;margin:0 0 14px;font-weight:700}
+.hero p.lead{font-size:19px;color:var(--muted);margin:0 0 22px;max-width:34em}
+.ctas{display:flex;gap:12px;flex-wrap:wrap}
+.btn{display:inline-block;padding:12px 22px;border-radius:10px;font-weight:500;text-decoration:none;border:2px solid var(--primary)}
+.btn.primary{background:var(--primary);color:#fff}
+:root[data-theme="dark"] .btn.primary{color:#0D1629}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .btn.primary{color:#0D1629}}
+.btn.ghost{color:var(--primary);background:transparent}
+.fine{font-size:14px;color:var(--muted);margin:12px 0 0}
+
+/* the approval card */
+.req{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:0 18px 40px -24px rgba(0,35,72,.45)}
+.req .who{display:flex;justify-content:space-between;font-size:14px;color:var(--muted)}
+.req .tag{background:var(--orange-soft);color:var(--ink);border-radius:6px;padding:2px 8px;font-size:13px}
+.req h3{margin:10px 0 4px;font-size:21px}
+.req .detail{background:var(--paper);border-radius:10px;padding:10px 14px;font-size:15px;margin:10px 0 14px}
+.req .detail div{display:grid;grid-template-columns:92px 1fr;gap:12px;text-align:start}
+.req .detail .k{color:var(--muted)}
+.req .actions{display:flex;gap:10px}
+.req button{flex:1;font:inherit;font-weight:500;padding:11px;border-radius:10px;cursor:pointer;border:2px solid var(--primary)}
+.req .ok{background:var(--green);color:#fff}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .req .ok{color:#0D1629}}
+:root[data-theme="dark"] .req .ok{color:#0D1629}
+.req .no{background:transparent;color:var(--red);border-color:var(--red)}
+.req .log{margin-top:12px;font-size:14px;color:var(--muted);min-height:1.6em}
+.req .log strong{color:var(--ink)}
+.req.done .actions{opacity:.45;pointer-events:none}
+
+section{padding:40px 0;border-top:1px solid var(--line)}
+section h2{font-size:clamp(26px,3.4vw,36px);line-height:1.2;margin:0 0 8px}
+section p.intro{color:var(--muted);max-width:42em;margin:0 0 22px}
+
+.paths{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+@media (max-width:600px){.paths{grid-template-columns:1fr}}
+.path{border-radius:12px;padding:18px;border-top:6px solid var(--green);background:var(--green-soft)}
+.path.wait{border-top-color:var(--orange);background:var(--orange-soft)}
+.path.block{border-top-color:var(--red);background:var(--red-soft)}
+.path h3{margin:0 0 6px;font-size:20px}
+.path.allow h3{color:var(--green)}
+.path p{margin:0;font-size:16px}
+.extras{display:grid;grid-template-columns:1fr 1.4fr;gap:16px;margin-top:16px;align-items:start}
+@media (max-width:760px){.extras{grid-template-columns:1fr}}
+.extra{padding:16px 18px;border:1px solid var(--line);border-radius:12px;background:var(--card)}
+.extra h3{margin:0 0 6px;font-size:18px}
+.extra p{margin:0;color:var(--muted);font-size:15.5px}
+table.log{width:100%;border-collapse:collapse;font-size:14.5px;margin:4px 0 8px}
+table.log th{font-weight:500;color:var(--muted);text-align:start;padding:5px 8px;border-bottom:1px solid var(--line)}
+table.log td{padding:6px 8px;border-bottom:1px solid var(--line);text-align:start}
+table.log td.t{font-variant-numeric:tabular-nums;color:var(--muted);white-space:nowrap}
+.s-ok{color:var(--green);font-weight:500}.s-wait{color:var(--orange);font-weight:500}.s-no{color:var(--red);font-weight:500}
+:root:not([data-theme="dark"]) .s-wait{color:#B85500}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .s-wait{color:var(--orange)}}
+
+.steps{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(3,1fr);gap:14px;counter-reset:s}
+@media (max-width:600px){.steps{grid-template-columns:1fr}}
+.steps li{counter-increment:s;display:flex;gap:12px;align-items:flex-start;background:var(--card);border-radius:12px;padding:14px 16px}
+.steps li::before{content:counter(s);flex:none;display:inline-flex;width:30px;height:30px;border-radius:50%;background:var(--primary-soft);color:var(--primary);font-weight:700;align-items:center;justify-content:center}
+.steps h3{margin:0 0 2px;font-size:17px}
+.steps p{margin:0;color:var(--muted);font-size:15px}
+
+.why{display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:start}
+@media (max-width:760px){.why{grid-template-columns:1fr;gap:12px}}
+.quote{font-size:clamp(22px,2.6vw,28px);font-weight:700;line-height:1.35;margin:0;padding-inline-start:16px;border-inline-start:5px solid var(--orange)}
+.why ul{margin:0;padding-inline-start:20px;color:var(--muted)}
+.why li{margin-bottom:8px}
+.why li strong{color:var(--ink)}
+
+.plans{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+@media (max-width:760px){.plans{grid-template-columns:1fr}}
+.plan{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px;display:flex;flex-direction:column}
+.plan.main{border:2px solid var(--primary)}
+.plan h3{margin:0;font-size:19px}
+.plan .price{font-size:28px;font-weight:700;margin:6px 0 2px}
+.plan .for{color:var(--muted);font-size:15px;margin:0 0 10px}
+.plan ul{margin:0;padding-inline-start:20px;font-size:15.5px}
+.plan li{margin-bottom:4px}
+.plan .more{margin-top:10px;padding-top:10px;border-top:1px dashed var(--line);font-size:14.5px;color:var(--muted)}
+
+.status{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width:760px){.status{grid-template-columns:1fr}}
+.status div{border-radius:12px;padding:18px}
+.status .now{background:var(--green-soft)}
+.status .next{background:var(--orange-soft)}
+.status h3{margin:0 0 6px;font-size:18px}
+.status ul{margin:0;padding-inline-start:20px}
+
+.vid{position:relative;border-radius:16px;overflow:hidden;background:#000E1F;box-shadow:0 24px 60px -30px rgba(0,35,72,.6);aspect-ratio:16/9}
+.vid video{display:block;width:100%;height:100%}
+#watch .vid{max-width:880px;margin:0 auto}
+.vision{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:center;margin-top:20px}
+@media (max-width:760px){.vision{grid-template-columns:1fr}}
+.vision h3{margin:0 0 6px;font-size:22px}.vision p{margin:0;color:var(--muted)}.vision p.save{margin-top:12px}
+footer{border-top:1px solid var(--line);padding:22px 0 36px;font-size:15px;color:var(--muted);display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:center}
+footer .r{color:var(--ink);font-size:16px}
+.ph{background:var(--orange-soft);padding:0 6px;border-radius:4px;color:var(--ink)}
+[data-l="en"]{display:none}
+html[lang="en"] [data-l="he"]{display:none}
+html[lang="en"] [data-l="en"]{display:revert}
+.notyet{margin:.6em 0 0;font-size:.92em;opacity:.85}
+</style>
+</head>
+<body>
+
+
+<div class="wrap">
+<header>
+  <a class="brand" href="#top" aria-label="RODNY, AI Approval Gate">
+    <img src="rodny-icon-180.png" alt="" width="44" height="44">
+    <span><span class="name">RODNY</span><span class="sub">AI Approval Gate</span></span>
+  </a>
+  <button class="lang" id="lang" type="button">English</button>
+</header>
+
+<div class="hero" id="top">
+  <div>
+    <h1 data-l="he">סוכן AI רוצה לפעול. אתם מחליטים.</h1>
+    <h1 data-l="en">An AI agent wants to act. You decide.</h1>
+    <p class="lead" data-l="he"><span class="r">RODNY</span> הוא שער אישורים חינמי ונייטרלי שעומד בין סוכני AI לבין המחשב והמערכות שלכם. <span class="r">RODNY</span> מאשר מיד פעולה מותרת, מעביר לאישור שלכם פעולה רגישה, וחוסם פעולה אסורה. ההחלטות שלו נרשמות ביומן.</p>
+    <p class="lead" data-l="en"><span class="r">RODNY</span> is a free, neutral approval gate between AI agents and your computer and systems. <span class="r">RODNY</span> lets allowed actions through, sends sensitive ones to you for approval, and blocks forbidden ones. Its decisions are written to a log.</p>
+    <div class="ctas">
+      <a class="btn primary" href="#demo"><span data-l="he">נסו את ההדגמה</span><span data-l="en">Try the demo</span></a>
+      <a class="btn ghost" href="#how"><span data-l="he">איך זה עובד</span><span data-l="en">How it works</span></a>
+    </div>
+    <p class="fine" data-l="he">קוד פתוח. לא שייך לאף חברה או פלטפורמה של סוכנים.</p>
+    <p class="fine" data-l="en">Open source. Not owned by any agent company or platform.</p>
+  </div>
+
+  <div class="req" id="req" aria-live="polite">
+    <div class="who"><span>agent-1</span><span class="tag" data-l="he">ממתין לאישור</span><span class="tag" data-l="en">Waiting for you</span></div>
+    <h3 data-l="he">יצירת טיוטת מייל ל-214 לקוחות</h3>
+    <h3 data-l="en">Create an email draft for 214 customers</h3>
+    <div class="detail">
+      <div><span class="k" data-l="he">נושא</span><span class="k" data-l="en">Subject</span><span data-l="he">עדכון מחירים לדצמבר</span><span data-l="en">December price update</span></div>
+      <div><span class="k" data-l="he">למה מחכה</span><span class="k" data-l="en">Why it waits</span><span data-l="he">הכלל שלכם: טיוטה שמזכירה מחירים דורשת אישור</span><span data-l="en">Your rule: a draft that mentions prices needs approval</span></div>
+    </div>
+    <div class="actions">
+      <button class="ok" type="button" data-act="ok"><span data-l="he">אישור חד-פעמי</span><span data-l="en">Approve once</span></button>
+      <button class="no" type="button" data-act="no"><span data-l="he">דחייה</span><span data-l="en">Deny</span></button>
+    </div>
+    <div class="log" id="log"><span data-l="he">דוגמה להמחשה. לחצו כדי לראות מה <span class="r">RODNY</span> רושם ביומן.</span><span data-l="en">An illustration. Click to see what <span class="r">RODNY</span> writes in the log.</span></div>
+  </div>
+</div>
+</div>
+
+<section id="watch"><div class="wrap">
+  <h2 data-l="he">ראו את <span class="r">RODNY</span> בפעולה</h2>
+  <h2 data-l="en">See <span class="r">RODNY</span> in action</h2>
+  <div class="vid" data-l="he"><video controls muted playsinline preload="none" poster="media/poster-today-he.jpg"><source src="media/rodny-today-he.mp4" type="video/mp4"></video></div>
+  <div class="vid" data-l="en"><video controls muted playsinline preload="none" poster="media/poster-today-en.jpg"><source src="media/rodny-today-en.mp4" type="video/mp4"></video></div>
+  <p class="notyet" data-l="he" style="text-align:center">הסרטון הוא המחשה מונפשת. הוא לא הקלטה של הפיילוט או של הבדיקות, ולא מראה חיבור למערכות אמיתיות.</p>
+  <p class="notyet" data-l="en" style="text-align:center">This video is an animated illustration. It is not a recording of the pilot or of the tests, and it does not show a connection to real systems.</p>
+</div></section>
+
+<section id="how"><div class="wrap">
+  <h2 data-l="he">כל בקשה שעוברת דרך <span class="r">RODNY</span> מקבלת אחת משלוש תשובות</h2>
+  <h2 data-l="en">Every request sent through <span class="r">RODNY</span> gets one of three answers</h2>
+  <p class="intro" data-l="he">אתם קובעים את הכללים פעם אחת. <span class="r">RODNY</span> בודק כל בקשה שסוכן שולח אליו, לפני שהיא מבוצעת. פעולה שסוכן עושה בלי לעבור דרך <span class="r">RODNY</span> לא נבדקת.</p>
+  <p class="intro" data-l="en">You set the rules once. <span class="r">RODNY</span> checks each request an agent sends to it, before it runs. An action an agent takes without going through <span class="r">RODNY</span> is not checked.</p>
+  <div class="paths">
+    <div class="path allow"><h3 data-l="he">מותר: עובר</h3><h3 data-l="en">Allowed: passes</h3><p data-l="he">פעולה שגרתית שהגדרתם כמותרת, <span class="r">RODNY</span> מאשר מיד, בלי להטריד אתכם.</p><p data-l="en"><span class="r">RODNY</span> approves a routine action you allowed at once, without bothering you.</p></div>
+    <div class="path wait"><h3 data-l="he">רגיש: מחכה לכם</h3><h3 data-l="en">Sensitive: waits for you</h3><p data-l="he"><span class="r">RODNY</span> מעביר את הבקשה למסך הבעלים. האישור תקף לפעולה המדויקת הזאת, פעם אחת.</p><p data-l="en"><span class="r">RODNY</span> sends the request to your owner screen. Approval covers that exact action, once.</p></div>
+    <div class="path block"><h3 data-l="he">אסור: נחסם</h3><h3 data-l="en">Forbidden: blocked</h3><p data-l="he"><span class="r">RODNY</span> עוצר את הפעולה לפני שהיא מגיעה למערכת, ועונה לסוכן בבירור.</p><p data-l="en"><span class="r">RODNY</span> stops the action before it reaches the system and gives the agent a clear answer.</p></div>
+  </div>
+  <div class="extras">
+    <div class="extra"><h3 data-l="he">עצירת חירום</h3><h3 data-l="en">Emergency stop</h3><p data-l="he">לחיצה אחת שלכם במסך הבעלים. מהרגע ש-<span class="r">RODNY</span> מקבל את העצירה, הוא לא מתחיל שום ביצוע חדש, גם לא של בקשה שכבר אושרה. ביצוע שכבר התחיל עשוי להסתיים, או להישאר במצב לא ודאי. פעולה שכבר נשלחה למערכת לא מתבטלת. בגרסה הזו העצירה נבדקה על Linux מול מערכת מדומה, לא על Windows.</p><p data-l="en">One click by you on the owner screen. Once <span class="r">RODNY</span> has received the stop, it starts no new execution, not even of a request already approved. An execution that already started may finish, or be left uncertain. An action already sent to a system is not undone. In this version the stop was tested on Linux against a simulated system, not on Windows.</p></div>
+    <div class="extra"><h3 data-l="he">דוח יומן</h3><h3 data-l="en">Log report</h3>
+      <table class="log" data-l="he"><thead><tr><th>שעה</th><th>מי</th><th>בקשה</th><th>החלטת <span class="r">RODNY</span></th></tr></thead><tbody>
+        <tr><td class="t">09:12</td><td>agent-1</td><td>טיוטת סדר יום לפגישה</td><td class="s-ok">אושר אוטומטית</td></tr>
+        <tr><td class="t">09:14</td><td>agent-1</td><td>טיוטת עדכון מחירים</td><td class="s-wait">ממתין לאישור</td></tr>
+        <tr><td class="t">09:15</td><td>בעלים</td><td>טיוטת עדכון מחירים</td><td class="s-ok">אושר חד-פעמי</td></tr>
+        <tr><td class="t">09:16</td><td>agent-1</td><td>מחיקת כל הטיוטות</td><td class="s-no">נחסם</td></tr></tbody></table>
+      <table class="log" data-l="en"><thead><tr><th>Time</th><th>Who</th><th>Request</th><th><span class="r">RODNY</span> decision</th></tr></thead><tbody>
+        <tr><td class="t">09:12</td><td>agent-1</td><td>Meeting agenda draft</td><td class="s-ok">Approved automatically</td></tr>
+        <tr><td class="t">09:14</td><td>agent-1</td><td>Price update draft</td><td class="s-wait">Waiting for approval</td></tr>
+        <tr><td class="t">09:15</td><td>owner</td><td>Price update draft</td><td class="s-ok">Approved once</td></tr>
+        <tr><td class="t">09:16</td><td>agent-1</td><td>Delete all drafts</td><td class="s-no">Blocked</td></tr></tbody></table>
+      <p data-l="he"><span class="r">RODNY</span> רושם ביומן את ההחלטות והאירועים שהוא מתעד. כשמגיעות הרבה בקשות בבת אחת, חלק מהסירובים החוזרים נרשמים כסיכום, וספירה שעוד לא נכתבה עלולה ללכת לאיבוד אם התהליך נעצר. הדוח נשמר אצלכם במחשב.</p><p data-l="en"><span class="r">RODNY</span> writes the decisions and events it records to a log. When many requests arrive at once, some repeated refusals are recorded as a summary, and a count not yet written may be lost if the process stops. The report stays on your computer.</p></div>
+  </div>
+</div></section>
+
+<section id="demo"><div class="wrap">
+  <h2 data-l="he">לנסות את ההדגמה</h2>
+  <h2 data-l="en">Try the demo</h2>
+  <p class="intro" data-l="he">זו גרסת תצוגה מקדימה. ההדגמה מריצה את המנוע של <span class="r">RODNY</span> על נתוני דמה במחשב שלכם, ולא שולחת בקשות לשום מערכת אמיתית. בהפעלה הראשונה, אם גרסת Node הנעולה עוד לא נמצאת במחשב, ההדגמה מורידה אותה. את התעבורה של הדפדפן ושל Windows עצמם לא מדדנו. הבדיקות האוטומטיות של הגרסה הזו רצו על Windows ב-25 בנובמבר, עם החריגים שמפורטים ב-GitHub. את ההדגמה עצמה בגרסה הזו לא הפעלנו על Windows; היא רצה לאחרונה על Windows בגרסה קודמת.</p>
+  <p class="intro" data-l="en">This is a preview. The demo runs the <span class="r">RODNY</span> engine on sample data on your computer and sends no requests to any real system. On the first start, if the pinned version of Node is not on the computer yet, the demo downloads it. We did not measure the traffic of the browser or of Windows itself. The automated tests of this version ran on Windows on 25 November, with the exceptions listed on GitHub. We did not start the demo itself on Windows in this version; it last ran on Windows on an earlier build.</p>
+  <ol class="steps">
+    <li><div><h3 data-l="he">הורדה</h3><h3 data-l="en">Download</h3><p data-l="he">מורידים את קובץ ה-ZIP מ-<a href="https://github.com/rodny-io/rodny/releases/tag/v0.1.0-preview">GitHub</a> ופותחים אותו.</p><p data-l="en">Download the ZIP file from <a href="https://github.com/rodny-io/rodny/releases/tag/v0.1.0-preview">GitHub</a> and unzip it.</p></div></li>
+    <li><div><h3 data-l="he">הפעלה</h3><h3 data-l="en">Start</h3><p data-l="he">לוחצים פעמיים על start-demo.cmd.</p><p data-l="en">Double-click start-demo.cmd.</p></div></li>
+    <li><div><h3 data-l="he">צפייה</h3><h3 data-l="en">Watch</h3><p data-l="he">בדפדפן רואים את <span class="r">RODNY</span> מאשר, חוסם, מחכה לכם ועוצר בחירום.</p><p data-l="en">In the browser you see <span class="r">RODNY</span> allow, block, wait for you and stop on emergency.</p></div></li>
+  </ol>
+</div></section>
+
+<section><div class="wrap">
+  <h2 data-l="he">למה שער נפרד ולא עוד הגדרה בסוכן</h2>
+  <h2 data-l="en">Why a separate gate, not another agent setting</h2>
+  <div class="why">
+    <p class="quote" data-l="he">כמו שעובד לא מאשר לעצמו הוצאות, סוכן לא אמור להחליט לבד מה מותר לו.</p>
+    <p class="quote" data-l="en">Just as an employee does not approve their own expenses, an agent should not decide alone what it may do.</p>
+    <ul data-l="he">
+      <li><strong>נייטרלי.</strong> לא שייך לאף ספק סוכנים. כל סוכן שמגיש בקשות ל-<span class="r">RODNY</span> עובר באותם כללים.</li>
+      <li><strong>קוד פתוח.</strong> הליבה של <span class="r">RODNY</span> ברישיון Apache 2.0. כל אחד יכול לבדוק מה <span class="r">RODNY</span> עושה.</li>
+      <li><strong>אצלכם.</strong> <span class="r">RODNY</span>, הכללים ודוח היומן נשמרים במחשב שלכם.</li>
+    </ul>
+    <ul data-l="en">
+      <li><strong>Neutral.</strong> Not owned by any agent vendor. Every agent that sends requests to <span class="r">RODNY</span> gets the same rules.</li>
+      <li><strong>Open source.</strong> The <span class="r">RODNY</span> core is Apache 2.0. Anyone can check what <span class="r">RODNY</span> does.</li>
+      <li><strong>Yours.</strong> <span class="r">RODNY</span>, the rules and the log report stay on your computer.</li>
+    </ul>
+  </div>
+</div></section>
+
+<section id="plans"><div class="wrap">
+  <h2 data-l="he">מחירים</h2>
+  <h2 data-l="en">Pricing</h2>
+  <p class="intro" data-l="he">הבסיס חינמי וקוד פתוח. התוספות בתשלום עוד בפיתוח.</p>
+  <p class="intro" data-l="en">The basics are free and open source. The paid add-ons are still in development.</p>
+  <div class="plans">
+    <div class="plan">
+      <h3 data-l="he">פיילוט</h3><h3 data-l="en">Pilot</h3>
+      <div class="price" data-l="he">חינם</div><div class="price" data-l="en">Free</div>
+      <p class="for" data-l="he">לארגונים ראשונים שבודקים איתנו</p><p class="for" data-l="en">For early organisations testing with us</p>
+      <ul data-l="he"><li>ליווי בהתקנה על Windows</li><li>ליווי צמוד בזמן הפיילוט</li><li>השפעה על מה נבנה הלאה</li></ul>
+      <ul data-l="en"><li>Help with the Windows set-up</li><li>Hands-on help during the pilot</li><li>A say in what we build next</li></ul>
+    </div>
+    <div class="plan main">
+      <h3 data-l="he">אישי ועסק קטן</h3><h3 data-l="en">Personal and small business</h3>
+      <div class="price" data-l="he">חינם</div><div class="price" data-l="en">Free</div>
+      <p class="for" data-l="he">סוכן אחד, מחשב אחד</p><p class="for" data-l="en">One agent, one PC</p>
+      <ul data-l="he"><li>כללים: מותר, באישור, אסור</li><li>אישור חד-פעמי לפעולה מדויקת</li><li>דוח יומן ועצירת חירום</li></ul>
+      <ul data-l="en"><li>Rules: allow, approve, deny</li><li>One-time approval of an exact action</li><li>Log report and emergency stop</li></ul>
+      <div class="more" data-l="he">בתשלום, בהמשך: כמה סוכנים ומחשבים, התראות לטלפון, גיבוי יומן בענן ותמיכה.</div>
+      <div class="more" data-l="en">Paid add-ons, coming later: several agents and PCs, phone alerts, cloud log backup and support.</div>
+    </div>
+    <div class="plan">
+      <h3 data-l="he">ארגונים, בענן</h3><h3 data-l="en">Organisations, in the cloud</h3>
+      <div class="price" data-l="he">בפיתוח</div><div class="price" data-l="en">In development</div>
+      <p class="for" data-l="he">בתשלום, עם חודש ניסיון חינם</p><p class="for" data-l="en">Paid, with a one-month free trial</p>
+      <ul data-l="he"><li>שירות מנוהל</li><li>ניהול מרכזי של הרבה מחשבים</li><li>חוזה ורמת שירות</li></ul>
+      <ul data-l="en"><li>Managed service</li><li>Central management of many PCs</li><li>Contract and SLA</li></ul>
+    </div>
+  </div>
+</div></section>
+
+<section><div class="wrap">
+  <h2 data-l="he">איפה אנחנו עכשיו</h2>
+  <h2 data-l="en">Where we are now</h2>
+  <div class="status">
+    <div class="now"><h3 data-l="he">קיים היום (גרסת תצוגה מקדימה)</h3><h3 data-l="en">Available today (preview)</h3>
+      <ul data-l="he"><li><span class="r">RODNY</span> מקומי על Windows, עם סוכן אחד</li><li>אישור במסך הבעלים ודוח יומן</li><li>פיילוט של 7 ימים על Windows, 18–25 בנובמבר: נרשמו 7 מתוך 7 ריצות תרחיש, וכל דוח שנשמר היה PASS. הפיילוט נעצר בצעד END מאושר, והעצירה נבדקה.</li><li>קוד פתוח ב-<a href="https://github.com/rodny-io/rodny/releases/tag/v0.1.0-preview">GitHub</a>: גרסת תצוגה מקדימה v0.1.0-preview</li></ul>
+      <p class="notyet" data-l="he">בגרסת הפיילוט כפתורי הדחייה והעצירה במסך הבעלים לא הגיעו <span style="white-space:nowrap">ל-RODNY</span>, וכפתור האישור פעל. התקלה תוקנה בגרסה הזו ונבדקה אצלנו על Linux, לא על Windows.</p>
+      <p class="notyet" data-l="he">בגרסה הזו עדיין לא נבדקו: הפעלה כשירות של Windows, התקנה נקייה וחיבור למערכות אמיתיות.</p>
+      <ul data-l="en"><li>A local <span class="r">RODNY</span> on Windows with one agent</li><li>Owner-screen approval and log report</li><li>A 7-day pilot on Windows, 18–25 November: seven of seven scenario runs were recorded, and each saved report was PASS. The pilot was stopped by its approved END step, and the stop was verified.</li><li>Open source on <a href="https://github.com/rodny-io/rodny/releases/tag/v0.1.0-preview">GitHub</a>: preview release v0.1.0-preview</li></ul>
+      <p class="notyet" data-l="en">In the pilot version, the deny and stop buttons on the owner screen did not reach RODNY, while the approve button worked. This is fixed in this version and was tested by us on Linux, not on Windows.</p>
+      <p class="notyet" data-l="en">In this version, not tested yet: running as a Windows service, a clean installation and connection to real systems.</p></div>
+    <div class="next"><h3 data-l="he">בדרך</h3><h3 data-l="en">Coming next</h3>
+      <ul data-l="he"><li>תוכנת התקנה</li><li>כמה סוכנים במקביל</li><li>גרסת ענן לארגונים</li></ul>
+      <ul data-l="en"><li>An installer</li><li>Several agents in parallel</li><li>A cloud version for organisations</li></ul></div>
+  </div>
+  <div class="vision">
+    <div class="vid"><video controls muted playsinline preload="none" poster="media/poster-vision.jpg"><source src="media/rodny-vision.mp4" type="video/mp4"></video></div>
+    <div><h3 data-l="he">החזון של <span class="r">RODNY</span></h3><h3 data-l="en">The <span class="r">RODNY</span> vision</h3>
+      <p data-l="he">לאן אנחנו הולכים: <span class="r">RODNY</span> יבדוק כל פעולה של סוכן לפני שהיא יוצאת החוצה, גם למערכות חיצוניות, בין פלטפורמות ובין ארגונים, לא רק בתוך העסק. הרבה סוכנים, הרבה מערכות, שער אישורים אחד. חלק מהיכולות בפיתוח.</p>
+      <p data-l="en">Where we are going: <span class="r">RODNY</span> will check every agent action before it leaves, including to external systems, across platforms and between organisations, not only inside your business. Many agents, many systems, one approval gate. Some capabilities are in development.</p>
+      <p data-l="he" dir="rtl" class="save"><span class="r">RODNY</span> שומר עליכם, ובדרך גם על הכסף שלכם. כבר היום <span class="r">RODNY</span> רושם ביומן בקשות שהוא חוסם, ומגביל את מספר הבקשות שהוא מקבל מכל סוכן. מעבר למגבלה הוא מסרב להן, גם אם הסוכן ממשיך לשלוח. מכסות חכמות ודוח חיסכון שבועי נמצאים בפיתוח.</p>
+      <p data-l="en" dir="ltr" class="save"><span class="r">RODNY</span> protects you, and your money along the way. Today <span class="r">RODNY</span> logs the requests it blocks and limits how many requests it accepts from each agent. Above the limit it refuses them, even if the agent keeps sending. Smart quotas and a weekly savings report are in development.</p></div>
+  </div>
+</div></section>
+
+<div class="wrap"><footer>
+  <span><span class="r">RODNY.IO</span> · AI Approval Gate</span>
+  <span data-l="he">יצירת קשר: <a href="mailto:hello@rodny.io">hello@rodny.io</a></span>
+  <span data-l="en">Contact: <a href="mailto:hello@rodny.io">hello@rodny.io</a></span>
+  <span data-l="he">דיווח על בעיית אבטחה: <a href="mailto:security@rodny.io">security@rodny.io</a></span>
+  <span data-l="en">Report a security issue: <a href="mailto:security@rodny.io">security@rodny.io</a></span>
+</footer></div>
+
+<script>
+(function(){
+  var html=document.documentElement, btn=document.getElementById('lang');
+  function set(l){
+    html.lang=l; html.dir=(l==='he')?'rtl':'ltr';
+    btn.textContent=(l==='he')?'English':'עברית';
+    try{localStorage.setItem('rodny-lang',l)}catch(e){}
+  }
+  var saved=null; try{saved=localStorage.getItem('rodny-lang')}catch(e){}
+  if(saved==='en') set('en');
+  btn.addEventListener('click',function(){ set(html.lang==='he'?'en':'he') });
+
+  var req=document.getElementById('req'), log=document.getElementById('log');
+  var t=new Date(), hh=String(t.getHours()).padStart(2,'0')+':'+String(t.getMinutes()).padStart(2,'0');
+  var R='<span class="r">RODNY</span>';
+  req.addEventListener('click',function(e){
+    var b=e.target.closest('button[data-act]'); if(!b) return;
+    var ok=b.getAttribute('data-act')==='ok';
+    req.classList.add('done');
+    log.innerHTML = ok
+      ? '<span data-l="he">דוגמה להמחשה. <strong>'+hh+' אושר חד-פעמי.</strong> '+R+' יוצר את הטיוטה פעם אחת, וחוסם בקשה זהה נוספת.</span><span data-l="en">An illustration. <strong>'+hh+' Approved once.</strong> '+R+' creates the draft once and blocks an identical repeat.</span>'
+      : '<span data-l="he">דוגמה להמחשה. <strong>'+hh+' נדחה.</strong> שום דבר לא נוצר. '+R+' עונה לסוכן שהבקשה נדחתה.</span><span data-l="en">An illustration. <strong>'+hh+' Denied.</strong> Nothing was created. '+R+' tells the agent the request was denied.</span>';
+  });
+})();
+</script>
+</body>
+</html>
