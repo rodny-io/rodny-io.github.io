@@ -30,7 +30,19 @@ html{scroll-behavior:smooth}
 @media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}*{transition:none!important}}
 body{margin:0;background:var(--paper);color:var(--ink);font-family:Rubik,"Segoe UI",Arial,sans-serif;font-size:17px;line-height:1.55}
 a{color:var(--primary)}
-:focus-visible{outline:3px solid var(--orange);outline-offset:2px;border-radius:4px}
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px;border-radius:4px}
+:root{--focus:#B85500}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--focus:#FF9A3C}}
+:root[data-theme="dark"]{--focus:#FF9A3C}
+.skip{position:absolute;inset-inline-start:12px;top:-60px;background:var(--card);color:var(--ink);padding:10px 16px;border-radius:8px;border:2px solid var(--focus);z-index:10;text-decoration:none;font-weight:500}
+.skip:focus{top:12px}
+.sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+details.desc{max-width:880px;margin:12px auto 0;font-size:15px;color:var(--muted)}
+details.desc summary{cursor:pointer;color:var(--primary);font-weight:500}
+details.desc p{margin:8px 0 0}
+.a11y{font-size:15.5px}
+.a11y ul{margin:6px 0 0;padding-inline-start:20px;color:var(--muted)}
+.a11y h3{margin:14px 0 4px;font-size:18px}
 .wrap{max-width:1120px;margin:0 auto;padding:0 24px}
 @media (max-width:600px){.wrap{padding:0 16px}}
 /* RODNY always in Latin letters, in the logo's typeface */
@@ -63,7 +75,7 @@ header{display:flex;align-items:center;justify-content:space-between;padding:16p
 .req{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:0 18px 40px -24px rgba(0,35,72,.45)}
 .req .who{display:flex;justify-content:space-between;font-size:14px;color:var(--muted)}
 .req .tag{background:var(--orange-soft);color:var(--ink);border-radius:6px;padding:2px 8px;font-size:13px}
-.req h3{margin:10px 0 4px;font-size:21px}
+.req h2{margin:10px 0 4px;font-size:21px;line-height:1.3}
 .req .detail{background:var(--paper);border-radius:10px;padding:10px 14px;font-size:15px;margin:10px 0 14px}
 .req .detail div{display:grid;grid-template-columns:92px 1fr;gap:12px;text-align:start}
 .req .detail .k{color:var(--muted)}
@@ -75,7 +87,8 @@ header{display:flex;align-items:center;justify-content:space-between;padding:16p
 .req .no{background:transparent;color:var(--red);border-color:var(--red)}
 .req .log{margin-top:12px;font-size:14px;color:var(--muted);min-height:1.6em}
 .req .log strong{color:var(--ink)}
-.req.done .actions{opacity:.45;pointer-events:none}
+.req.done .actions{opacity:.45}
+.req button:disabled{cursor:default}
 
 section{padding:40px 0;border-top:1px solid var(--line)}
 section h2{font-size:clamp(26px,3.4vw,36px);line-height:1.2;margin:0 0 8px}
@@ -151,7 +164,7 @@ html[lang="en"] [data-l="en"]{display:revert}
 </style>
 </head>
 <body>
-
+<a class="skip" href="#main"><span data-l="he">דלגו לתוכן הראשי</span><span data-l="en">Skip to main content</span></a>
 
 <div class="wrap">
 <header>
@@ -159,9 +172,12 @@ html[lang="en"] [data-l="en"]{display:revert}
     <img src="rodny-icon-180.png" alt="" width="44" height="44">
     <span><span class="name">RODNY</span><span class="sub">AI Approval Gate</span></span>
   </a>
-  <button class="lang" id="lang" type="button">English</button>
+  <button class="lang" id="lang" type="button" lang="en">English</button>
 </header>
+</div>
 
+<main id="main" tabindex="-1">
+<div class="wrap">
 <div class="hero" id="top">
   <div>
     <h1 data-l="he">סוכן AI רוצה לפעול. אתם מחליטים.</h1>
@@ -176,10 +192,10 @@ html[lang="en"] [data-l="en"]{display:revert}
     <p class="fine" data-l="en">Open source. Not owned by any agent company or platform.</p>
   </div>
 
-  <div class="req" id="req" aria-live="polite">
+  <div class="req" id="req">
     <div class="who"><span>agent-1</span><span class="tag" data-l="he">ממתין לאישור</span><span class="tag" data-l="en">Waiting for you</span></div>
-    <h3 data-l="he">יצירת טיוטת מייל ל-214 לקוחות</h3>
-    <h3 data-l="en">Create an email draft for 214 customers</h3>
+    <h2 data-l="he">יצירת טיוטת מייל ל-214 לקוחות</h2>
+    <h2 data-l="en">Create an email draft for 214 customers</h2>
     <div class="detail">
       <div><span class="k" data-l="he">נושא</span><span class="k" data-l="en">Subject</span><span data-l="he">עדכון מחירים לדצמבר</span><span data-l="en">December price update</span></div>
       <div><span class="k" data-l="he">למה מחכה</span><span class="k" data-l="en">Why it waits</span><span data-l="he">הכלל שלכם: טיוטה שמזכירה מחירים דורשת אישור</span><span data-l="en">Your rule: a draft that mentions prices needs approval</span></div>
@@ -188,7 +204,7 @@ html[lang="en"] [data-l="en"]{display:revert}
       <button class="ok" type="button" data-act="ok"><span data-l="he">אישור חד-פעמי</span><span data-l="en">Approve once</span></button>
       <button class="no" type="button" data-act="no"><span data-l="he">דחייה</span><span data-l="en">Deny</span></button>
     </div>
-    <div class="log" id="log"><span data-l="he">דוגמה להמחשה. לחצו כדי לראות מה <span class="r">RODNY</span> רושם ביומן.</span><span data-l="en">An illustration. Click to see what <span class="r">RODNY</span> writes in the log.</span></div>
+    <div class="log" id="log" aria-live="polite"><span data-l="he">דוגמה להמחשה. לחצו כדי לראות מה <span class="r">RODNY</span> רושם ביומן.</span><span data-l="en">An illustration. Click to see what <span class="r">RODNY</span> writes in the log.</span></div>
   </div>
 </div>
 </div>
@@ -196,8 +212,10 @@ html[lang="en"] [data-l="en"]{display:revert}
 <section id="watch"><div class="wrap">
   <h2 data-l="he">ראו את <span class="r">RODNY</span> בפעולה</h2>
   <h2 data-l="en">See <span class="r">RODNY</span> in action</h2>
-  <div class="vid" data-l="he"><video controls muted playsinline preload="none" poster="media/poster-today-he.jpg"><source src="media/rodny-today-he.mp4" type="video/mp4"></video></div>
-  <div class="vid" data-l="en"><video controls muted playsinline preload="none" poster="media/poster-today-en.jpg"><source src="media/rodny-today-en.mp4" type="video/mp4"></video></div>
+  <div class="vid" data-l="he"><video controls muted playsinline preload="none" poster="media/poster-today-he.jpg" aria-label="סרטון: RODNY בפעולה (ללא קול)"><source src="media/rodny-today-he.mp4" type="video/mp4"></video></div>
+  <div class="vid" data-l="en"><video controls muted playsinline preload="none" poster="media/poster-today-en.jpg" aria-label="Video: RODNY in action (no sound)"><source src="media/rodny-today-en.mp4" type="video/mp4"></video></div>
+  <details class="desc" data-l="he"><summary>מה רואים בסרטון (תיאור במילים; לסרטון אין פס קול)</summary><p>הכותרת: "סוכני AI כבר פועלים בשמכם." שלושה סוכנים מוצגים: כותבים טיוטות, משנים קבצים, שולחים הודעות. השאלה "מי מחליט?" מופיעה. שער כתום בשם <span class="r">RODNY</span> עומד בדרך. בקשה של agent-1, "טיוטת עדכון מחירים", מסומנת "ממתין לאישור". בקשה אחרת, "מחיקת כל הטיוטות", מסומנת "נחסם". במסך הבעלים מופיעה הבקשה עם הכפתורים "אישור חד-פעמי" ו"דחייה", והסמן לוחץ על אישור. יומן ההחלטות מציג: 09:12 טיוטת סדר יום – מותר; 09:14 טיוטת עדכון מחירים – ממתין. בסוף: "סוכן AI רוצה לפעול. אתם מחליטים." זו המחשה מונפשת.</p></details>
+  <details class="desc" data-l="en"><summary>What the video shows (text description; the video has no sound)</summary><p>The title: "AI agents already act on your behalf." Three agents are shown: writing drafts, changing files, sending messages. The question "Who decides?" appears. An orange gate named <span class="r">RODNY</span> stands in the way. A request from agent-1, "Price update draft", is marked "Waiting for approval". Another request, "Delete all drafts", is marked "Blocked". The owner screen shows the request with the buttons "Approve once" and "Deny", and the pointer clicks approve. The decision log shows: 09:12 meeting agenda draft – allowed; 09:14 price update draft – waiting. At the end: "An AI agent wants to act. You decide." This is an animated illustration.</p></details>
   <p class="notyet" data-l="he" style="text-align:center">הסרטון הוא המחשה מונפשת. הוא לא הקלטה של הפיילוט או של הבדיקות, ולא מראה חיבור למערכות אמיתיות.</p>
   <p class="notyet" data-l="en" style="text-align:center">This video is an animated illustration. It is not a recording of the pilot or of the tests, and it does not show a connection to real systems.</p>
 </div></section>
@@ -215,12 +233,12 @@ html[lang="en"] [data-l="en"]{display:revert}
   <div class="extras">
     <div class="extra"><h3 data-l="he">עצירת חירום</h3><h3 data-l="en">Emergency stop</h3><p data-l="he">לחיצה אחת שלכם במסך הבעלים. מהרגע ש-<span class="r">RODNY</span> מקבל את העצירה, הוא לא מתחיל שום ביצוע חדש, גם לא של בקשה שכבר אושרה. ביצוע שכבר התחיל עשוי להסתיים, או להישאר במצב לא ודאי. פעולה שכבר נשלחה למערכת לא מתבטלת. בגרסה הזו העצירה נבדקה על Linux מול מערכת מדומה, לא על Windows.</p><p data-l="en">One click by you on the owner screen. Once <span class="r">RODNY</span> has received the stop, it starts no new execution, not even of a request already approved. An execution that already started may finish, or be left uncertain. An action already sent to a system is not undone. In this version the stop was tested on Linux against a simulated system, not on Windows.</p></div>
     <div class="extra"><h3 data-l="he">דוח יומן</h3><h3 data-l="en">Log report</h3>
-      <table class="log" data-l="he"><thead><tr><th>שעה</th><th>מי</th><th>בקשה</th><th>החלטת <span class="r">RODNY</span></th></tr></thead><tbody>
+      <table class="log" data-l="he"><caption class="sr">דוגמה לדוח יומן</caption><thead><tr><th scope="col">שעה</th><th scope="col">מי</th><th scope="col">בקשה</th><th scope="col">החלטת <span class="r">RODNY</span></th></tr></thead><tbody>
         <tr><td class="t">09:12</td><td>agent-1</td><td>טיוטת סדר יום לפגישה</td><td class="s-ok">אושר אוטומטית</td></tr>
         <tr><td class="t">09:14</td><td>agent-1</td><td>טיוטת עדכון מחירים</td><td class="s-wait">ממתין לאישור</td></tr>
         <tr><td class="t">09:15</td><td>בעלים</td><td>טיוטת עדכון מחירים</td><td class="s-ok">אושר חד-פעמי</td></tr>
         <tr><td class="t">09:16</td><td>agent-1</td><td>מחיקת כל הטיוטות</td><td class="s-no">נחסם</td></tr></tbody></table>
-      <table class="log" data-l="en"><thead><tr><th>Time</th><th>Who</th><th>Request</th><th><span class="r">RODNY</span> decision</th></tr></thead><tbody>
+      <table class="log" data-l="en"><caption class="sr">Example log report</caption><thead><tr><th scope="col">Time</th><th scope="col">Who</th><th scope="col">Request</th><th scope="col"><span class="r">RODNY</span> decision</th></tr></thead><tbody>
         <tr><td class="t">09:12</td><td>agent-1</td><td>Meeting agenda draft</td><td class="s-ok">Approved automatically</td></tr>
         <tr><td class="t">09:14</td><td>agent-1</td><td>Price update draft</td><td class="s-wait">Waiting for approval</td></tr>
         <tr><td class="t">09:15</td><td>owner</td><td>Price update draft</td><td class="s-ok">Approved once</td></tr>
@@ -308,7 +326,9 @@ html[lang="en"] [data-l="en"]{display:revert}
       <ul data-l="en"><li>An installer</li><li>Several agents in parallel</li><li>A cloud version for organisations</li></ul></div>
   </div>
   <div class="vision">
-    <div class="vid"><video controls muted playsinline preload="none" poster="media/poster-vision.jpg"><source src="media/rodny-vision.mp4" type="video/mp4"></video></div>
+    <div><div class="vid"><video controls muted playsinline preload="none" poster="media/poster-vision.jpg" aria-label="RODNY vision video (no sound)"><source src="media/rodny-vision.mp4" type="video/mp4"></video></div>
+      <details class="desc" data-l="he"><summary>מה רואים בסרטון החזון (תיאור במילים; לסרטון אין פס קול, והטקסט בו באנגלית)</summary><p>הכותרת: "The RODNY vision". שלושה סוכני AI (Agent A, B, C) מחוברים לשער <span class="r">RODNY</span>, ומעבר לו ענן, נתונים, יישומים עסקיים וארגונים. השער ממיין בקשות ל"מותר", "רגיש" ו"אסור". בקשה רגישה מחכה; אדם בודק אותה במסך ולוחץ Approve. דוח פעילות מציג שש שורות: קריאת רשומות שאושרה לפי מדיניות, טיוטה שחיכתה ואושרה פעם אחת על ידי הבעלים ובוצעה, וגישה לרשומות מוגבלות שנחסמה. בסוף: "An AI agent wants to act. You decide." וההערה "חלק מהיכולות בפיתוח".</p></details>
+      <details class="desc" data-l="en"><summary>What the vision video shows (text description; the video has no sound)</summary><p>The title: "The RODNY vision". Three AI agents (Agent A, B, C) connect to the <span class="r">RODNY</span> gate, with cloud, data, business apps and enterprise behind it. The gate sorts requests into "Allowed", "Sensitive" and "Forbidden". A sensitive request waits; a person reviews it on screen and clicks Approve. An activity report shows six rows: records read and approved by policy, a draft that waited, was approved once by the owner and was executed, and access to restricted records that was blocked. At the end: "An AI agent wants to act. You decide." and the note "Some capabilities are in development".</p></details></div>
     <div><h3 data-l="he">החזון של <span class="r">RODNY</span></h3><h3 data-l="en">The <span class="r">RODNY</span> vision</h3>
       <p data-l="he">לאן אנחנו הולכים: <span class="r">RODNY</span> יבדוק כל פעולה של סוכן לפני שהיא יוצאת החוצה, גם למערכות חיצוניות, בין פלטפורמות ובין ארגונים, לא רק בתוך העסק. הרבה סוכנים, הרבה מערכות, שער אישורים אחד. חלק מהיכולות בפיתוח.</p>
       <p data-l="en">Where we are going: <span class="r">RODNY</span> will check every agent action before it leaves, including to external systems, across platforms and between organisations, not only inside your business. Many agents, many systems, one approval gate. Some capabilities are in development.</p>
@@ -317,12 +337,40 @@ html[lang="en"] [data-l="en"]{display:revert}
   </div>
 </div></section>
 
+<section id="accessibility" class="a11y"><div class="wrap">
+  <h2 data-l="he">הצהרת נגישות</h2>
+  <h2 data-l="en">Accessibility statement</h2>
+  <div data-l="he">
+    <p>אנחנו רוצים שכל אחד יוכל להשתמש באתר הזה, כולל אנשים עם מוגבלות. היעד שלנו הוא התקן הישראלי ת"י 5568, ברמה AA של הנחיות WCAG 2.0. זה יעד שאנחנו עובדים לפיו, ולא אישור שהאתר עומד בתקן.</p>
+    <h3>מה עשינו</h3>
+    <ul><li>מבנה כותרות ואזורים ברורים, וקישור "דלגו לתוכן הראשי" בתחילת הדף.</li><li>הדף בנוי לשימוש במקלדת, עם מסגרת בולטת סביב הפריט שבפוקוס.</li><li>ניגודיות צבעים לפחות 4.5:1 לטקסט רגיל, במצב בהיר וגם במצב כהה.</li><li>הדף מכבד בקשה להפחתת תנועה, ושום סרטון לא מתחיל לבד.</li><li>לסרטונים אין פס קול. לכל סרטון יש תיאור במילים מתחתיו.</li><li>לטבלאות יש כותרות עמודה. תוצאת ההדגמה האינטראקטיבית מסומנת בקוד כך שקוראי מסך אמורים להקריא אותה.</li><li>הדף זמין בעברית ובאנגלית.</li></ul>
+    <h3>מה עוד לא מושלם</h3>
+    <ul><li>בדקנו את הדף בעצמנו בכלי אוטומטי (axe), במצב בהיר וכהה ובשתי השפות. הכלי לא מצא הפרות בבדיקות האוטומטיות שהגדרנו. בדיקת הכתוביות לסרטונים נשארה לבדיקה ידנית: לסרטונים אין פס קול, ומתחת לכל סרטון יש תיאור בטקסט. זו הערכה שלנו, ולא תוצאה של הכלי. כלי אוטומטי לבדו לא קובע אם אתר עומד בתקן.</li><li>עוד לא בדקנו את הדף עם קורא מסך, במכשירים אמיתיים או בבדיקה ידנית מלאה במקלדת, ולא נעשתה בדיקה של מורשה נגישות.</li><li>הקישורים מובילים לאתר GitHub, שאינו בשליטתנו.</li><li>הגופנים נטענים מ-Google Fonts.</li></ul>
+    <h3>פנייה בנושא נגישות</h3>
+    <p>נתקלתם בבעיה? כתבו לנו ל-<a href="mailto:hello@rodny.io?subject=%D7%A0%D7%92%D7%99%D7%A9%D7%95%D7%AA">hello@rodny.io</a> עם הנושא "נגישות", ותארו מה ניסיתם לעשות ובאיזה דפדפן. נחזור אליכם.</p>
+    <p class="notyet">ההצהרה עודכנה בנובמבר 2026.</p>
+  </div>
+  <div data-l="en">
+    <p>We want everyone to be able to use this site, including people with disabilities. Our target is the Israeli standard IS 5568, at level AA of WCAG 2.0. This is a target we work to, not a statement that the site conforms.</p>
+    <h3>What we did</h3>
+    <ul><li>Clear headings and page regions, and a "Skip to main content" link at the top.</li><li>The page is built for keyboard use, with a clear outline around the item in focus.</li><li>Colour contrast of at least 4.5:1 for normal text, in light and dark mode.</li><li>The page respects a request for reduced motion, and no video starts by itself.</li><li>The videos have no sound. Each video has a text description below it.</li><li>Tables have column headers. The result of the interactive demo is marked in the code so that screen readers should read it out.</li><li>The page is available in Hebrew and English.</li></ul>
+    <h3>What is not perfect yet</h3>
+    <ul><li>We checked the page ourselves with an automated tool (axe), in light and dark mode and in both languages. The tool found no violations in the automated checks we configured. The check for video captions was left for manual review: the videos have no soundtrack, and each video has a text description below it. That is our own judgement, not a result of the tool. An automated tool alone cannot decide whether a site conforms.</li><li>We have not yet tested the page with a screen reader, on real devices or with a full manual keyboard test, and no accessibility auditor has checked it.</li><li>Links lead to GitHub, which we do not control.</li><li>The fonts load from Google Fonts.</li></ul>
+    <h3>Accessibility contact</h3>
+    <p>Found a problem? Write to <a href="mailto:hello@rodny.io?subject=Accessibility">hello@rodny.io</a> with the subject "Accessibility", and tell us what you tried to do and in which browser. We will get back to you.</p>
+    <p class="notyet">Statement updated November 2026.</p>
+  </div>
+</div></section>
+</main>
+
 <div class="wrap"><footer>
   <span><span class="r">RODNY.IO</span> · AI Approval Gate</span>
   <span data-l="he">יצירת קשר: <a href="mailto:hello@rodny.io">hello@rodny.io</a></span>
   <span data-l="en">Contact: <a href="mailto:hello@rodny.io">hello@rodny.io</a></span>
   <span data-l="he">דיווח על בעיית אבטחה: <a href="mailto:security@rodny.io">security@rodny.io</a></span>
   <span data-l="en">Report a security issue: <a href="mailto:security@rodny.io">security@rodny.io</a></span>
+  <a href="#accessibility" data-l="he">הצהרת נגישות</a>
+  <a href="#accessibility" data-l="en">Accessibility statement</a>
 </footer></div>
 
 <script>
@@ -331,8 +379,10 @@ html[lang="en"] [data-l="en"]{display:revert}
   function set(l){
     html.lang=l; html.dir=(l==='he')?'rtl':'ltr';
     btn.textContent=(l==='he')?'English':'עברית';
+    btn.lang=(l==='he')?'en':'he';
     try{localStorage.setItem('rodny-lang',l)}catch(e){}
   }
+  var rs=document.querySelectorAll('.r'); for(var i=0;i<rs.length;i++){ rs[i].lang='en'; }
   var saved=null; try{saved=localStorage.getItem('rodny-lang')}catch(e){}
   if(saved==='en') set('en');
   btn.addEventListener('click',function(){ set(html.lang==='he'?'en':'he') });
@@ -344,6 +394,7 @@ html[lang="en"] [data-l="en"]{display:revert}
     var b=e.target.closest('button[data-act]'); if(!b) return;
     var ok=b.getAttribute('data-act')==='ok';
     req.classList.add('done');
+    var bs=req.querySelectorAll('button[data-act]'); for(var j=0;j<bs.length;j++){ bs[j].disabled=true; }
     log.innerHTML = ok
       ? '<span data-l="he">דוגמה להמחשה. <strong>'+hh+' אושר חד-פעמי.</strong> '+R+' יוצר את הטיוטה פעם אחת, וחוסם בקשה זהה נוספת.</span><span data-l="en">An illustration. <strong>'+hh+' Approved once.</strong> '+R+' creates the draft once and blocks an identical repeat.</span>'
       : '<span data-l="he">דוגמה להמחשה. <strong>'+hh+' נדחה.</strong> שום דבר לא נוצר. '+R+' עונה לסוכן שהבקשה נדחתה.</span><span data-l="en">An illustration. <strong>'+hh+' Denied.</strong> Nothing was created. '+R+' tells the agent the request was denied.</span>';
