@@ -361,6 +361,21 @@ html[lang="en"] [data-l="en"]{display:revert}
     <p class="notyet">Statement updated November 2026.</p>
   </div>
 </div></section>
+
+<section id="privacy" class="a11y"><div class="wrap">
+  <h2 data-l="he">פרטיות וספירת ביקורים</h2>
+  <h2 data-l="en">Privacy and visit counting</h2>
+  <div data-l="he">
+    <p>האתר סופר ביקורים בעזרת GoatCounter, שירות ספירה שלא משתמש בעוגיות.</p>
+    <ul><li><strong>מה נשלח:</strong> כתובת העמוד (בלי פרמטרים), שם האתר שממנו הגעתם (בלי הכתובת המלאה), כותרת העמוד, גודל המסך, וסימן אם נראה שהדפדפן מופעל אוטומטית. כמו בכל גלישה, מגיעות גם כתובת ה-IP ופרטי הדפדפן.</li><li><strong>מה מעובד ולא נשמר:</strong> כתובת ה-IP ופרטי הדפדפן מעובדים בזיכרון של GoatCounter עד 8 שעות, כדי לזהות ביקור חוזר, ולא נשמרים במאגר הנתונים. גם גודל המסך לא נשמר.</li><li><strong>מה נשמר:</strong> רק סיכומים — איזה עמוד נצפה, מאיזה אתר הגעתם, ומאיזו מדינה. המדינה נקבעת לפי כתובת ה-IP, והכתובת עצמה לא נשמרת. הסיכומים נשמרים בלי מחיקה אוטומטית.</li><li><strong>בדפדפן שלכם:</strong> הספירה לא שומרת עוגיות או מזהה. האתר שומר רק את השפה שבחרתם. מי שפותח כתובת מיוחדת שמסתיימת ב-<span dir="ltr" lang="en" style="white-space:nowrap">#toggle-goatcounter</span> מבקש לא להיספר, וההעדפה הזו נשמרת בדפדפן שלו.</li><li>השרתים של GoatCounter נמצאים בפינלנד ובגרמניה.</li><li>אם הספירה חסומה אצלכם או לא נטענת, האתר עובד כרגיל.</li></ul>
+    <p>שאלות: <a href="mailto:hello@rodny.io">hello@rodny.io</a></p>
+  </div>
+  <div data-l="en">
+    <p>This site counts visits with GoatCounter, a counting service that does not use cookies.</p>
+    <ul><li><strong>What is sent:</strong> the page address (without parameters), the site you came from (without its full address), the page title, your screen size, and a flag if the browser seems to be automated. As with any visit, your IP address and browser details also arrive.</li><li><strong>Processed but not stored:</strong> your IP address and browser details are processed in GoatCounter's memory for up to 8 hours, to recognise a repeat visit, and are not stored in the database. Screen size is not stored either.</li><li><strong>What is stored:</strong> only totals — which page was viewed, which site you came from, and which country. The country is derived from the IP address, and the address itself is not stored. Totals are kept with no automatic deletion.</li><li><strong>In your browser:</strong> counting sets no cookies and no identifier. This site stores only your chosen language. If you open a special address ending in <span dir="ltr" style="white-space:nowrap">#toggle-goatcounter</span>, you ask not to be counted, and that preference is saved in your browser.</li><li>GoatCounter's servers are in Finland and Germany.</li><li>If counting is blocked or does not load for you, the site works as usual.</li></ul>
+    <p>Questions: <a href="mailto:hello@rodny.io">hello@rodny.io</a></p>
+  </div>
+</div></section>
 </main>
 
 <div class="wrap"><footer>
@@ -371,6 +386,8 @@ html[lang="en"] [data-l="en"]{display:revert}
   <span data-l="en">Report a security issue: <a href="mailto:security@rodny.io">security@rodny.io</a></span>
   <a href="#accessibility" data-l="he">הצהרת נגישות</a>
   <a href="#accessibility" data-l="en">Accessibility statement</a>
+  <a href="#privacy" data-l="he">פרטיות</a>
+  <a href="#privacy" data-l="en">Privacy</a>
 </footer></div>
 
 <script>
@@ -401,5 +418,12 @@ html[lang="en"] [data-l="en"]{display:revert}
   });
 })();
 </script>
+<script>(function(){try{if(location.search)history.replaceState(null,'',location.pathname+location.hash)}catch(e){}window.rodnyCount=function(){try{if(location.search)return;var g=window.goatcounter;if(!g||typeof g.count!=='function')return;var r='';try{r=document.referrer?new URL(document.referrer).origin:''}catch(e){r=''}var go=function(){if(location.search)return;g.count({path:location.pathname||'/',referrer:r})};if(document.visibilityState&&document.visibilityState!=='visible'){var f=function(){if(document.visibilityState!=='visible')return;document.removeEventListener('visibilitychange',f);go()};document.addEventListener('visibilitychange',f)}else{go()}}catch(e){}}})();</script>
+<script data-goatcounter="https://rodny.goatcounter.com/count"
+        data-goatcounter-settings='{"no_onload":true,"no_events":true}'
+        onload="window.rodnyCount&&window.rodnyCount()"
+        async src="https://gc.zgo.at/count.v5.js"
+        crossorigin="anonymous"
+        integrity="sha384-atnOLvQb9t+jTSipvd75X2yginT4PjVbqDdlJAmxMm+wYElFmeR6EmLP5bYeoRVQ"></script>
 </body>
 </html>
